@@ -3,11 +3,12 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import path from "path"; // Add this to resolve file paths
 import authRouter from "./routes/auth.js";
 import User from "./models/User.js";
 import bcrypt from "bcrypt";
 
-// Load environment variables from .env file
+// Load environment variables
 dotenv.config();
 
 // Initialize Express app
@@ -73,6 +74,15 @@ app.get("/api/users", async (req, res) => {
     console.error(error);
     res.status(500).json({ success: false, message: "Error fetching users" });
   }
+});
+
+// ✨ Serve Frontend (Vite Build)
+const __dirname = path.resolve(); // Ensure correct directory path
+
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
 });
 
 // Start Server
